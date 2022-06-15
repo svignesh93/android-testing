@@ -31,7 +31,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.TaskdetailFragBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.DELETE_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackBar
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -46,25 +46,31 @@ class TaskDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setupFab()
-        view.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+        view.setupSnackBar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
         setupNavigation()
         this.setupRefreshLayout(viewDataBinding.refreshLayout)
     }
 
     private fun setupNavigation() {
-        viewModel.deleteTaskEvent.observe(viewLifecycleOwner, EventObserver {
-            val action = TaskDetailFragmentDirections
-                .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
-            findNavController().navigate(action)
-        })
-        viewModel.editTaskEvent.observe(viewLifecycleOwner, EventObserver {
-            val action = TaskDetailFragmentDirections
-                .actionTaskDetailFragmentToAddEditTaskFragment(
-                    args.taskId,
-                    resources.getString(R.string.edit_task)
-                )
-            findNavController().navigate(action)
-        })
+        viewModel.deleteTaskEvent.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                val action = TaskDetailFragmentDirections
+                    .actionTaskDetailFragmentToTasksFragment(DELETE_RESULT_OK)
+                findNavController().navigate(action)
+            }
+        )
+        viewModel.editTaskEvent.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                val action = TaskDetailFragmentDirections
+                    .actionTaskDetailFragmentToAddEditTaskFragment(
+                        args.taskId,
+                        resources.getString(R.string.edit_task)
+                    )
+                findNavController().navigate(action)
+            }
+        )
     }
 
     private fun setupFab() {

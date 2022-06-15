@@ -28,7 +28,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.databinding.AddtaskFragBinding
 import com.example.android.architecture.blueprints.todoapp.tasks.ADD_EDIT_RESULT_OK
 import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackBar
 import com.google.android.material.snackbar.Snackbar
 
 /**
@@ -43,7 +43,8 @@ class AddEditTaskFragment : Fragment() {
     private val viewModel by viewModels<AddEditTaskViewModel>()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val root = inflater.inflate(R.layout.addtask_frag, container, false)
@@ -56,21 +57,24 @@ class AddEditTaskFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setupSnackbar()
+        setupSnackBar()
         setupNavigation()
         this.setupRefreshLayout(viewDataBinding.refreshLayout)
         viewModel.start(args.taskId)
     }
 
-    private fun setupSnackbar() {
-        view?.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+    private fun setupSnackBar() {
+        view?.setupSnackBar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
     }
 
     private fun setupNavigation() {
-        viewModel.taskUpdatedEvent.observe(viewLifecycleOwner, EventObserver {
-            val action = AddEditTaskFragmentDirections
-                .actionAddEditTaskFragmentToTasksFragment(ADD_EDIT_RESULT_OK)
-            findNavController().navigate(action)
-        })
+        viewModel.taskUpdatedEvent.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                val action = AddEditTaskFragmentDirections
+                    .actionAddEditTaskFragmentToTasksFragment(ADD_EDIT_RESULT_OK)
+                findNavController().navigate(action)
+            }
+        )
     }
 }

@@ -28,12 +28,10 @@
 
     </data>
 
-
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:id="@+id/coordinator_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
 
         <com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout
             android:id="@+id/refresh_layout"
@@ -47,6 +45,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:clickable="true"
+                android:focusable="true"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -99,7 +98,9 @@
                         android:layout_gravity="center"
                         android:layout_marginBottom="@dimen/list_item_padding"
                         android:text="@{context.getString(viewmodel.noTasksLabel)}" />
+
                 </LinearLayout>
+
             </RelativeLayout>
 
         </com.example.android.architecture.blueprints.todoapp.ScrollChildSwipeRefreshLayout>
@@ -113,6 +114,7 @@
             app:fabSize="normal"
             app:layout_anchor="@id/refresh_layout"
             app:layout_anchorGravity="bottom|right|end" />
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
-</layout>
 
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>

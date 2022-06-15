@@ -33,8 +33,7 @@ import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Task
 import com.example.android.architecture.blueprints.todoapp.databinding.TasksFragBinding
 import com.example.android.architecture.blueprints.todoapp.util.setupRefreshLayout
-import com.example.android.architecture.blueprints.todoapp.util.setupSnackbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.android.architecture.blueprints.todoapp.util.setupSnackBar
 import com.google.android.material.snackbar.Snackbar
 import timber.log.Timber
 
@@ -52,7 +51,8 @@ class TasksFragment : Fragment() {
     private lateinit var listAdapter: TasksAdapter
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         viewDataBinding = TasksFragBinding.inflate(inflater, container, false).apply {
@@ -86,7 +86,7 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the lifecycle owner to the lifecycle of the view
         viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
-        setupSnackbar()
+        setupSnackBar()
         setupListAdapter()
         setupRefreshLayout(viewDataBinding.refreshLayout, viewDataBinding.tasksList)
         setupNavigation()
@@ -94,16 +94,22 @@ class TasksFragment : Fragment() {
     }
 
     private fun setupNavigation() {
-        viewModel.openTaskEvent.observe(viewLifecycleOwner, EventObserver {
-            openTaskDetails(it)
-        })
-        viewModel.newTaskEvent.observe(viewLifecycleOwner, EventObserver {
-            navigateToAddNewTask()
-        })
+        viewModel.openTaskEvent.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                openTaskDetails(it)
+            }
+        )
+        viewModel.newTaskEvent.observe(
+            viewLifecycleOwner,
+            EventObserver {
+                navigateToAddNewTask()
+            }
+        )
     }
 
-    private fun setupSnackbar() {
-        view?.setupSnackbar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+    private fun setupSnackBar() {
+        view?.setupSnackBar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
         arguments?.let {
             viewModel.showEditResultMessage(args.userMessage)
         }
