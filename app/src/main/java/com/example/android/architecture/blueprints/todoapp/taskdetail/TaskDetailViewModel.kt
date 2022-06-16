@@ -15,25 +15,26 @@
  */
 package com.example.android.architecture.blueprints.todoapp.taskdetail
 
-import android.app.Application
 import androidx.annotation.StringRes
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.map
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
+import com.example.android.architecture.blueprints.todoapp.data.source.TasksRepository
 import kotlinx.coroutines.launch
 
 /**
  * ViewModel for the Details screen.
  */
-class TaskDetailViewModel(application: Application) : AndroidViewModel(application) {
-
-    // Note, for testing and architecture purposes, it's bad practice to construct the repository
-    // here. We'll show you how to fix this during the codelab
-    private val tasksRepository = DefaultTasksRepository.getRepository(application)
+class TaskDetailViewModel(private val tasksRepository: TasksRepository) : ViewModel() {
 
     private val _taskId = MutableLiveData<String>()
 
@@ -53,8 +54,8 @@ class TaskDetailViewModel(application: Application) : AndroidViewModel(applicati
     private val _deleteTaskEvent = MutableLiveData<Event<Unit>>()
     val deleteTaskEvent: LiveData<Event<Unit>> = _deleteTaskEvent
 
-    private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarText: LiveData<Event<Int>> = _snackbarText
+    private val _snackBarText = MutableLiveData<Event<Int>>()
+    val snackBarText: LiveData<Event<Int>> = _snackBarText
 
     // This LiveData depends on another so we can use a transformation.
     val completed: LiveData<Boolean> = _task.map { input: Task? ->
@@ -76,31 +77,30 @@ class TaskDetailViewModel(application: Application) : AndroidViewModel(applicati
         val task = _task.value ?: return@launch
         if (completed) {
             tasksRepository.completeTask(task)
-            showSnackbarMessage(R.string.task_marked_complete)
+            showSnackBarMessage(R.string.task_marked_complete)
         } else {
             tasksRepository.activateTask(task)
-            showSnackbarMessage(R.string.task_marked_active)
+            showSnackBarMessage(R.string.task_marked_active)
         }
     }
 
-    fun start(taskId: String) {
+    fun start(taskId: String?) {
         // If we're already loading or already loaded, return (might be a config change)
         if (_dataLoading.value == true || taskId == _taskId.value) {
             return
         }
         // Trigger the load
-        _taskId.value = taskId
+        _taskId.value = taskId!!
     }
 
     private fun computeResult(taskResult: Result<Task>): Task? {
         return if (taskResult is Success) {
             taskResult.data
         } else {
-            showSnackbarMessage(R.string.loading_tasks_error)
+            showSnackBarMessage(R.string.loading_tasks_error)
             null
         }
     }
-
 
     fun refresh() {
         // Refresh the repository and the task will be updated automatically.
@@ -113,7 +113,15 @@ class TaskDetailViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    private fun showSnackbarMessage(@StringRes message: Int) {
-        _snackbarText.value = Event(message)
+    private fun showSnackBarMessage(@StringRes message: Int) {
+        _snackBarText.value = Event(message)
     }
+}
+
+@Suppress("UNCHECKED_CAST")
+class TaskDetailViewModelFactory(
+    private val tasksRepository: TasksRepository
+) : ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>) =
+        (TaskDetailViewModel(tasksRepository) as T)
 }

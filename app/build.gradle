@@ -96,7 +96,6 @@ dependencies {
 
     // Instrumentation Test Suite
     androidTestImplementation "junit:junit:$junitVersion"
-    androidTestImplementation "org.mockito:mockito-core:3.8.0"
     androidTestImplementation "com.linkedin.dexmaker:dexmaker-mockito:2.28.1"
     androidTestImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion") {
         // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug#debug-agent-and-android
@@ -104,6 +103,8 @@ dependencies {
     }
 
     // Instrumentation Test Suite - AndroidX Test
+    androidTestImplementation "androidx.test:core-ktx:1.4.0"
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
     androidTestImplementation "androidx.test.ext:junit-ktx:$androidXTestExtKotlinRunnerVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$espressoVersion"
     androidTestImplementation "androidx.test.espresso:espresso-contrib:$espressoVersion"
@@ -111,5 +112,4 @@ dependencies {
     // Testing code should not be included in the main code.
     // Once https://issuetracker.google.com/128612536 is fixed this can be fixed.
     debugImplementation "androidx.fragment:fragment-testing:1.4.1"
-    debugImplementation "androidx.test:core-ktx:1.4.0"
 }

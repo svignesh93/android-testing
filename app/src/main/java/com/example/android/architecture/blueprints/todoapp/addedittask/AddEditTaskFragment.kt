@@ -64,7 +64,7 @@ class AddEditTaskFragment : Fragment() {
     }
 
     private fun setupSnackBar() {
-        view?.setupSnackBar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+        view?.setupSnackBar(this, viewModel.snackBarText, Snackbar.LENGTH_SHORT)
     }
 
     private fun setupNavigation() {

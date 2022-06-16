@@ -20,21 +20,24 @@ import com.example.android.architecture.blueprints.todoapp.data.Result
 import com.example.android.architecture.blueprints.todoapp.data.Task
 
 /**
- * Main entry point for accessing tasks data.
+ * Interface to the data layer.
  */
-interface TasksDataSource {
+interface TasksRepository {
 
-    fun observeTasks(): LiveData<Result<List<Task>>>
-
-    suspend fun getTasks(): Result<List<Task>>
+    suspend fun getTasks(forceUpdate: Boolean = false): Result<List<Task>>
 
     suspend fun refreshTasks()
 
-    fun observeTask(taskId: String): LiveData<Result<Task>>
-
-    suspend fun getTask(taskId: String): Result<Task>
+    fun observeTasks(): LiveData<Result<List<Task>>>
 
     suspend fun refreshTask(taskId: String)
+
+    fun observeTask(taskId: String): LiveData<Result<Task>>
+
+    /**
+     * Relies on [getTasks] to fetch data and picks the task with the same ID.
+     */
+    suspend fun getTask(taskId: String, forceUpdate: Boolean = false): Result<Task>
 
     suspend fun saveTask(task: Task)
 

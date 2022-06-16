@@ -17,12 +17,15 @@
 package com.example.android.architecture.blueprints.todoapp.addedittask
 
 import android.app.Application
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
+import com.example.android.architecture.blueprints.todoapp.TodoApplication
 import com.example.android.architecture.blueprints.todoapp.data.Result.Success
 import com.example.android.architecture.blueprints.todoapp.data.Task
-import com.example.android.architecture.blueprints.todoapp.data.source.DefaultTasksRepository
 import kotlinx.coroutines.launch
 
 /**
@@ -31,20 +34,20 @@ import kotlinx.coroutines.launch
 class AddEditTaskViewModel(application: Application) : AndroidViewModel(application) {
 
     // Note, for testing and architecture purposes, it's bad practice to construct the repository
-    // here. We'll show you how to fix this during the codelab
-    private val tasksRepository = DefaultTasksRepository.getRepository(application)
+    // here. We'll show you how to fix this during the code lab
+    private val tasksRepository = (application as TodoApplication).taskRepository
 
-    // Two-way databinding, exposing MutableLiveData
+    // Two-way data binding, exposing MutableLiveData
     val title = MutableLiveData<String>()
 
-    // Two-way databinding, exposing MutableLiveData
+    // Two-way data binding, exposing MutableLiveData
     val description = MutableLiveData<String>()
 
     private val _dataLoading = MutableLiveData<Boolean>()
     val dataLoading: LiveData<Boolean> = _dataLoading
 
-    private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarText: LiveData<Event<Int>> = _snackbarText
+    private val _snackBarText = MutableLiveData<Event<Int>>()
+    val snackBarText: LiveData<Event<Int>> = _snackBarText
 
     private val _taskUpdatedEvent = MutableLiveData<Event<Unit>>()
     val taskUpdatedEvent: LiveData<Event<Unit>> = _taskUpdatedEvent
@@ -105,11 +108,11 @@ class AddEditTaskViewModel(application: Application) : AndroidViewModel(applicat
         val currentDescription = description.value
 
         if (currentTitle == null || currentDescription == null) {
-            _snackbarText.value = Event(R.string.empty_task_message)
+            _snackBarText.value = Event(R.string.empty_task_message)
             return
         }
         if (Task(currentTitle, currentDescription).isEmpty) {
-            _snackbarText.value = Event(R.string.empty_task_message)
+            _snackBarText.value = Event(R.string.empty_task_message)
             return
         }
 
