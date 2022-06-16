@@ -85,7 +85,7 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // Set the lifecycle owner to the lifecycle of the view
-        viewDataBinding.lifecycleOwner = this.viewLifecycleOwner
+        viewDataBinding.lifecycleOwner = viewLifecycleOwner
         setupSnackBar()
         setupListAdapter()
         setupRefreshLayout(viewDataBinding.refreshLayout, viewDataBinding.tasksList)
@@ -109,7 +109,7 @@ class TasksFragment : Fragment() {
     }
 
     private fun setupSnackBar() {
-        view?.setupSnackBar(this, viewModel.snackbarText, Snackbar.LENGTH_SHORT)
+        view?.setupSnackBar(this, viewModel.snackBarText, Snackbar.LENGTH_SHORT)
         arguments?.let {
             viewModel.showEditResultMessage(args.userMessage)
         }

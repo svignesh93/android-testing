@@ -73,6 +73,7 @@
                         android:layout_height="wrap_content"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:items="@{viewmodel.items}" />
+
                 </LinearLayout>
 
                 <LinearLayout

@@ -18,7 +18,12 @@ package com.example.android.architecture.blueprints.todoapp.tasks
 import android.app.Application
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.lifecycle.*
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.switchMap
+import androidx.lifecycle.viewModelScope
 import com.example.android.architecture.blueprints.todoapp.Event
 import com.example.android.architecture.blueprints.todoapp.R
 import com.example.android.architecture.blueprints.todoapp.data.Result
@@ -34,10 +39,10 @@ import kotlinx.coroutines.launch
 class TasksViewModel(application: Application) : AndroidViewModel(application) {
 
     // Note, for testing and architecture purposes, it's bad practice to construct the repository
-    // here. We'll show you how to fix this during the codelab
+    // here. We'll show you how to fix this during the code lab
     private val tasksRepository = DefaultTasksRepository.getRepository(application)
 
-    private val _forceUpdate = MutableLiveData<Boolean>(false)
+    private val _forceUpdate = MutableLiveData(false)
 
     private val _items: LiveData<List<Task>> = _forceUpdate.switchMap { forceUpdate ->
         if (forceUpdate) {
@@ -48,7 +53,6 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         tasksRepository.observeTasks().switchMap { filterTasks(it) }
-
     }
 
     val items: LiveData<List<Task>> = _items
@@ -68,8 +72,8 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
     private val _tasksAddViewVisible = MutableLiveData<Boolean>()
     val tasksAddViewVisible: LiveData<Boolean> = _tasksAddViewVisible
 
-    private val _snackbarText = MutableLiveData<Event<Int>>()
-    val snackbarText: LiveData<Event<Int>> = _snackbarText
+    private val _snackBarText = MutableLiveData<Event<Int>>()
+    val snackBarText: LiveData<Event<Int>> = _snackBarText
 
     private var currentFiltering = TasksFilterType.ALL_TASKS
 
@@ -131,8 +135,10 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun setFilter(
-        @StringRes filteringLabelString: Int, @StringRes noTasksLabelString: Int,
-        @DrawableRes noTaskIconDrawable: Int, tasksAddVisible: Boolean
+        @StringRes filteringLabelString: Int,
+        @StringRes noTasksLabelString: Int,
+        @DrawableRes noTaskIconDrawable: Int,
+        tasksAddVisible: Boolean
     ) {
         _currentFilteringLabel.value = filteringLabelString
         _noTasksLabel.value = noTasksLabelString
@@ -143,22 +149,22 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
     fun clearCompletedTasks() {
         viewModelScope.launch {
             tasksRepository.clearCompletedTasks()
-            showSnackbarMessage(R.string.completed_tasks_cleared)
+            showSnackBarMessage(R.string.completed_tasks_cleared)
         }
     }
 
     fun completeTask(task: Task, completed: Boolean) = viewModelScope.launch {
         if (completed) {
             tasksRepository.completeTask(task)
-            showSnackbarMessage(R.string.task_marked_complete)
+            showSnackBarMessage(R.string.task_marked_complete)
         } else {
             tasksRepository.activateTask(task)
-            showSnackbarMessage(R.string.task_marked_active)
+            showSnackBarMessage(R.string.task_marked_active)
         }
     }
 
     /**
-     * Called by the Data Binding library and the FAB's click listener.
+     * Called by the Data Binding library and the FABs click listener.
      */
     fun addNewTask() {
         _newTaskEvent.value = Event(Unit)
@@ -174,15 +180,15 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
     fun showEditResultMessage(result: Int) {
         if (resultMessageShown) return
         when (result) {
-            EDIT_RESULT_OK -> showSnackbarMessage(R.string.successfully_saved_task_message)
-            ADD_EDIT_RESULT_OK -> showSnackbarMessage(R.string.successfully_added_task_message)
-            DELETE_RESULT_OK -> showSnackbarMessage(R.string.successfully_deleted_task_message)
+            EDIT_RESULT_OK -> showSnackBarMessage(R.string.successfully_saved_task_message)
+            ADD_EDIT_RESULT_OK -> showSnackBarMessage(R.string.successfully_added_task_message)
+            DELETE_RESULT_OK -> showSnackBarMessage(R.string.successfully_deleted_task_message)
         }
         resultMessageShown = true
     }
 
-    private fun showSnackbarMessage(message: Int) {
-        _snackbarText.value = Event(message)
+    private fun showSnackBarMessage(message: Int) {
+        _snackBarText.value = Event(message)
     }
 
     private fun filterTasks(tasksResult: Result<List<Task>>): LiveData<List<Task>> {
@@ -196,7 +202,7 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
             }
         } else {
             result.value = emptyList()
-            showSnackbarMessage(R.string.loading_tasks_error)
+            showSnackBarMessage(R.string.loading_tasks_error)
             isDataLoadingError.value = true
         }
 
@@ -211,21 +217,21 @@ class TasksViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun filterItems(tasks: List<Task>, filteringType: TasksFilterType): List<Task> {
-            val tasksToShow = ArrayList<Task>()
-            // We filter the tasks based on the requestType
-            for (task in tasks) {
-                when (filteringType) {
-                    TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
-                    TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
-                        tasksToShow.add(task)
-                    }
-                    TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
-                        tasksToShow.add(task)
-                    }
+        val tasksToShow = ArrayList<Task>()
+        // We filter the tasks based on the requestType
+        for (task in tasks) {
+            when (filteringType) {
+                TasksFilterType.ALL_TASKS -> tasksToShow.add(task)
+                TasksFilterType.ACTIVE_TASKS -> if (task.isActive) {
+                    tasksToShow.add(task)
+                }
+                TasksFilterType.COMPLETED_TASKS -> if (task.isCompleted) {
+                    tasksToShow.add(task)
                 }
             }
-            return tasksToShow
         }
+        return tasksToShow
+    }
 
     fun refresh() {
         _forceUpdate.value = true
