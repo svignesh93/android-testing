@@ -58,7 +58,7 @@ ext {
     androidXTestCoreVersion = '1.3.0'
     androidXTestExtKotlinRunnerVersion = '1.1.3'
     androidXTestRulesVersion = '1.2.0'
-    androidXAnnotations = '1.3.0'
+    androidXAnnotations = '1.4.0'
     appCompatVersion = '1.4.2'
     archLifecycleVersion = '2.4.1'
     coroutinesVersion = '1.5.2'

@@ -7,14 +7,24 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 android {
     compileSdkVersion rootProject.compileSdkVersion
     defaultConfig {
-        applicationId "com.example.android.architecture.blueprints.reactive"
+        applicationId "com.example.android.architecture.blueprints.todoapp"
         minSdkVersion rootProject.minSdkVersion
         targetSdkVersion rootProject.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        testApplicationId "com.example.android.architecture.blueprints.todoapp.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // The following argument makes the Android Test Orchestrator run its
+        // "pm clear" command after each test invocation. This command ensures
+        // that the app's state is completely cleared between tests.
+        // Setting this to false as it clears coverage output files and throws exception when
+        // generating coverage reports.
+        testInstrumentationRunnerArguments clearPackageData: 'false'
     }
     buildTypes {
+        debug {
+            testCoverageEnabled true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -25,8 +35,19 @@ android {
         enabledForTests = true
     }
     // Always show the result of every unit test when running via command line, even if it passes.
-    testOptions.unitTests {
-        includeAndroidResources = true
+    testOptions {
+        unitTests {
+            includeAndroidResources true
+        }
+        unitTests.all {
+            jacoco {
+                includeNoLocationClasses = true
+                // https://github.com/gradle/gradle/issues/5184#issuecomment-457865951
+                excludes += ['jdk.internal.**']
+            }
+        }
+        animationsDisabled true
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     lintOptions {
         baseline file("lint-baseline.xml")
@@ -82,7 +103,7 @@ dependencies {
     // JVM Test Suite
     testImplementation "junit:junit:$junitVersion"
     testImplementation "com.google.truth:truth:1.1.2"
-    testImplementation "org.robolectric:robolectric:4.5.1"
+    testImplementation "org.robolectric:robolectric:4.7.1"
     testImplementation "org.mockito:mockito-android:3.8.0"
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:$coroutinesVersion") {
         // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug#debug-agent-and-android
@@ -101,6 +122,10 @@ dependencies {
         // https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-debug#debug-agent-and-android
         exclude group: "org.jetbrains.kotlinx", module: "kotlinx-coroutines-debug"
     }
+
+    // Instrumentation Test Suite - Android Test Orchestrator
+    androidTestUtil 'androidx.test:orchestrator:1.4.1'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
 
     // Instrumentation Test Suite - AndroidX Test
     androidTestImplementation "androidx.test:core-ktx:1.4.0"
