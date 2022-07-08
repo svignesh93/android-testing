@@ -1,6 +1,6 @@
 buildscript {
     ext.kotlinVersion = '1.7.0'
-    ext.navigationVersion = '2.4.2'
+    ext.navigationVersion = '2.5.0'
     repositories {
         google()
         mavenCentral()
@@ -60,11 +60,11 @@ ext {
     androidXTestRulesVersion = '1.2.0'
     androidXAnnotations = '1.4.0'
     appCompatVersion = '1.4.2'
-    archLifecycleVersion = '2.4.1'
-    coroutinesVersion = '1.5.2'
+    archLifecycleVersion = '2.5.0'
+    coroutinesVersion = '1.6.3'
     cardVersion = '1.0.0'
     espressoVersion = '3.4.0'
-    fragmentKtxVersion = '1.4.0'
+    fragmentKtxVersion = '1.5.0'
     junitVersion = '4.13.2'
     materialVersion = '1.6.1'
     recyclerViewVersion = '1.2.1'
