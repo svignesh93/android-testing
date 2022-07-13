@@ -1,5 +1,5 @@
 buildscript {
-    ext.kotlinVersion = '1.7.0'
+    ext.kotlinVersion = '1.7.10'
     ext.navigationVersion = '2.5.0'
     repositories {
         google()
@@ -71,6 +71,6 @@ ext {
     roomVersion = '2.4.2'
     rulesVersion = '1.0.1'
     swipeRefreshLayoutVersion = '1.1.0'
-    timberVersion = '4.7.1'
+    timberVersion = '5.0.1'
     truthVersion = '0.44'
 }
